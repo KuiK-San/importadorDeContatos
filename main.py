@@ -8,6 +8,7 @@ from googleapiclient.errors import HttpError
 import csv
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
+from time import sleep
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/contacts', 'https://www.googleapis.com/auth/contacts.readonly']
@@ -60,36 +61,40 @@ def DesenharRiscos(qtd):
 if __name__ == '__main__':
     creds = None
     
-    #DesenharRiscos(100)
+    DesenharRiscos(60)
     print("\nCriado e desenvolvido por: Guilherme Casagrande")
-    #DesenharRiscos(100)
-#
-    nome = input("\nInsira aqui o nome da coluna de nome no CSV: ")
-    telefone = input("Insira aqui o nome da coluna de telefone no CSV: ")
+    DesenharRiscos(60)
+
 
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
     if not creds or not creds.valid:
+        print('\nLogue sua conta google no Navegador')
+        sleep(0.5)
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 'credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
-    # print(f'Agora você irá escolher onde está salvo o arquivo (aguarde a abertura da janela)')
-    # sleep(0.5)
+    
+    nome = input("\nInsira aqui o nome da coluna de nome no CSV: ")
+    telefone = input("Insira aqui o nome da coluna de telefone no CSV: ")
+    print(f'Agora você irá escolher onde está salvo o arquivo')
+    sleep(0.5)
     path = pathCsv()
     if path == None:
         print('\nArquivo não encontrado!')
+        sleep(3)
         exit()
     peoples = csv_to_dict(path.name)
 
     for people in peoples:
         name = people[nome]
-        email = people['email']
         phone = people[telefone]
         phone = f'+55 {phone}'
-        # salvarContato(name, phone, creds, email)
+        salvarContato(name, phone, creds)
+
+    sleep(5)
